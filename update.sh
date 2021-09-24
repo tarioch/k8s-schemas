@@ -1,15 +1,6 @@
 #!/bin/bash
 
-#echo "" > crds.yaml
-
-for CRD in `kubectl get crd -o name`
-do
-	echo $CRD
-#	kubectl get $CRD -o yaml >> crds.yaml
-#	echo "---" >> crds.yaml
-done
-
-wget https://github.com/yannh/kubeconform/raw/master/scripts/openapi2jsonschema.py 
+kubectl get crd -o yaml > crds.yaml
 
 rm -rf schemas
 mkdir schemas
@@ -21,6 +12,5 @@ python3 ../openapi2jsonschema.py https://doc.crds.dev/raw/github.com/jaegertraci
 
 cd ..
 
-#rm crds.yaml
-rm openapi2jsonschema.py
+rm crds.yaml
 
