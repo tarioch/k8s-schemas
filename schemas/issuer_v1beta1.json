@@ -239,6 +239,7 @@
                             "additionalProperties": false
                           },
                           "environment": {
+                            "description": "name of the Azure environment (default AzurePublicCloud)",
                             "enum": [
                               "AzurePublicCloud",
                               "AzureChinaCloud",
@@ -248,12 +249,30 @@
                             "type": "string"
                           },
                           "hostedZoneName": {
+                            "description": "name of the DNS zone that should be used",
                             "type": "string"
                           },
+                          "managedIdentity": {
+                            "description": "managed identity configuration, can not be used at the same time as clientID, clientSecretSecretRef or tenantID",
+                            "properties": {
+                              "clientID": {
+                                "description": "client ID of the managed identity, can not be used at the same time as resourceID",
+                                "type": "string"
+                              },
+                              "resourceID": {
+                                "description": "resource ID of the managed identity, can not be used at the same time as clientID",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object",
+                            "additionalProperties": false
+                          },
                           "resourceGroupName": {
+                            "description": "resource group the DNS zone is located in",
                             "type": "string"
                           },
                           "subscriptionID": {
+                            "description": "ID of the Azure subscription",
                             "type": "string"
                           },
                           "tenantID": {
@@ -818,7 +837,7 @@
                                                       "additionalProperties": false
                                                     },
                                                     "namespaceSelector": {
-                                                      "description": "A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means \"this pod's namespace\". An empty selector ({}) matches all namespaces. This field is alpha-level and is only honored when PodAffinityNamespaceSelector feature is enabled.",
+                                                      "description": "A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means \"this pod's namespace\". An empty selector ({}) matches all namespaces. This field is beta-level and is only honored when PodAffinityNamespaceSelector feature is enabled.",
                                                       "properties": {
                                                         "matchExpressions": {
                                                           "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
@@ -944,7 +963,7 @@
                                                   "additionalProperties": false
                                                 },
                                                 "namespaceSelector": {
-                                                  "description": "A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means \"this pod's namespace\". An empty selector ({}) matches all namespaces. This field is alpha-level and is only honored when PodAffinityNamespaceSelector feature is enabled.",
+                                                  "description": "A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means \"this pod's namespace\". An empty selector ({}) matches all namespaces. This field is beta-level and is only honored when PodAffinityNamespaceSelector feature is enabled.",
                                                   "properties": {
                                                     "matchExpressions": {
                                                       "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
@@ -1067,7 +1086,7 @@
                                                       "additionalProperties": false
                                                     },
                                                     "namespaceSelector": {
-                                                      "description": "A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means \"this pod's namespace\". An empty selector ({}) matches all namespaces. This field is alpha-level and is only honored when PodAffinityNamespaceSelector feature is enabled.",
+                                                      "description": "A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means \"this pod's namespace\". An empty selector ({}) matches all namespaces. This field is beta-level and is only honored when PodAffinityNamespaceSelector feature is enabled.",
                                                       "properties": {
                                                         "matchExpressions": {
                                                           "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
@@ -1193,7 +1212,7 @@
                                                   "additionalProperties": false
                                                 },
                                                 "namespaceSelector": {
-                                                  "description": "A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means \"this pod's namespace\". An empty selector ({}) matches all namespaces. This field is alpha-level and is only honored when PodAffinityNamespaceSelector feature is enabled.",
+                                                  "description": "A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means \"this pod's namespace\". An empty selector ({}) matches all namespaces. This field is beta-level and is only honored when PodAffinityNamespaceSelector feature is enabled.",
                                                   "properties": {
                                                     "matchExpressions": {
                                                       "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",

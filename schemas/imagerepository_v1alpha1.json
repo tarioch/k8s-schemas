@@ -64,6 +64,9 @@
       "additionalProperties": false
     },
     "status": {
+      "default": {
+        "observedGeneration": -1
+      },
       "description": "ImageRepositoryStatus defines the observed state of ImageRepository",
       "properties": {
         "canonicalImageName": {

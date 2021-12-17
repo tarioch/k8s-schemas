@@ -111,6 +111,9 @@
       "additionalProperties": false
     },
     "status": {
+      "default": {
+        "observedGeneration": -1
+      },
       "description": "ReceiverStatus defines the observed state of Receiver",
       "properties": {
         "conditions": {

@@ -57,6 +57,10 @@
           "type": "object",
           "additionalProperties": false
         },
+        "suspend": {
+          "description": "This flag tells the controller to suspend subsequent events handling. Defaults to false.",
+          "type": "boolean"
+        },
         "type": {
           "description": "Type of provider",
           "enum": [
@@ -75,7 +79,9 @@
             "azureeventhub",
             "telegram",
             "lark",
-            "matrix"
+            "matrix",
+            "opsgenie",
+            "alertmanager"
           ],
           "type": "string"
         },
@@ -91,6 +97,9 @@
       "additionalProperties": false
     },
     "status": {
+      "default": {
+        "observedGeneration": -1
+      },
       "description": "ProviderStatus defines the observed state of Provider",
       "properties": {
         "conditions": {
@@ -147,6 +156,11 @@
             "additionalProperties": false
           },
           "type": "array"
+        },
+        "observedGeneration": {
+          "description": "ObservedGeneration is the last reconciled generation.",
+          "format": "int64",
+          "type": "integer"
         }
       },
       "type": "object",

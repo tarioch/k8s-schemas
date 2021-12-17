@@ -15,12 +15,49 @@
     "spec": {
       "description": "HelmChartSpec defines the desired state of a Helm chart.",
       "properties": {
+        "accessFrom": {
+          "description": "AccessFrom defines an Access Control List for allowing cross-namespace references to this object.",
+          "properties": {
+            "namespaceSelectors": {
+              "description": "NamespaceSelectors is the list of namespace selectors to which this ACL applies. Items in this list are evaluated using a logical OR operation.",
+              "items": {
+                "description": "NamespaceSelector selects the namespaces to which this ACL applies. An empty map of MatchLabels matches all namespaces in a cluster.",
+                "properties": {
+                  "matchLabels": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "MatchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \"key\", the operator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
+                    "type": "object"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "namespaceSelectors"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
         "chart": {
           "description": "The name or path the Helm chart is available at in the SourceRef.",
           "type": "string"
         },
         "interval": {
           "description": "The interval at which to check the Source for updates.",
+          "type": "string"
+        },
+        "reconcileStrategy": {
+          "default": "ChartVersion",
+          "description": "Determines what enables the creation of a new artifact. Valid values are ('ChartVersion', 'Revision'). See the documentation of the values for an explanation on their behavior. Defaults to ChartVersion when omitted.",
+          "enum": [
+            "ChartVersion",
+            "Revision"
+          ],
           "type": "string"
         },
         "sourceRef": {
@@ -81,13 +118,16 @@
       "additionalProperties": false
     },
     "status": {
+      "default": {
+        "observedGeneration": -1
+      },
       "description": "HelmChartStatus defines the observed state of the HelmChart.",
       "properties": {
         "artifact": {
           "description": "Artifact represents the output of the last successful chart sync.",
           "properties": {
             "checksum": {
-              "description": "Checksum is the SHA1 checksum of the artifact.",
+              "description": "Checksum is the SHA256 checksum of the artifact.",
               "type": "string"
             },
             "lastUpdateTime": {

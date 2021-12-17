@@ -29,6 +29,15 @@
                   "description": "Interval at which to check the v1beta1.Source for updates. Defaults to 'HelmReleaseSpec.Interval'.",
                   "type": "string"
                 },
+                "reconcileStrategy": {
+                  "default": "ChartVersion",
+                  "description": "Determines what enables the creation of a new artifact. Valid values are ('ChartVersion', 'Revision'). See the documentation of the values for an explanation on their behavior. Defaults to ChartVersion when omitted.",
+                  "enum": [
+                    "ChartVersion",
+                    "Revision"
+                  ],
+                  "type": "string"
+                },
                 "sourceRef": {
                   "description": "The name and namespace of the v1beta1.Source the chart is available at.",
                   "properties": {
@@ -259,12 +268,14 @@
                         "patch": {
                           "description": "Patch contains the JSON6902 patch document with an array of operation objects.",
                           "items": {
-                            "description": "JSON6902 is a JSON6902 operation object. https://tools.ietf.org/html/rfc6902#section-4",
+                            "description": "JSON6902 is a JSON6902 operation object. https://datatracker.ietf.org/doc/html/rfc6902#section-4",
                             "properties": {
                               "from": {
+                                "description": "From contains a JSON-pointer value that references a location within the target document where the operation is performed. The meaning of the value depends on the value of Op, and is NOT taken into account by all operations.",
                                 "type": "string"
                               },
                               "op": {
+                                "description": "Op indicates the operation to perform. Its value MUST be one of \"add\", \"remove\", \"replace\", \"move\", \"copy\", or \"test\". https://datatracker.ietf.org/doc/html/rfc6902#section-4",
                                 "enum": [
                                   "test",
                                   "remove",
@@ -276,9 +287,11 @@
                                 "type": "string"
                               },
                               "path": {
+                                "description": "Path contains the JSON-pointer value that references a location within the target document where the operation is performed. The meaning of the value depends on the value of Op.",
                                 "type": "string"
                               },
                               "value": {
+                                "description": "Value contains a valid JSON structure. The meaning of the value depends on the value of Op, and is NOT taken into account by all operations.",
                                 "x-kubernetes-preserve-unknown-fields": true
                               }
                             },

@@ -13,7 +13,7 @@
       "type": "object"
     },
     "spec": {
-      "description": "KustomizationSpec defines the desired state of a kustomization.",
+      "description": "KustomizationSpec defines the configuration to calculate the desired state from a Source using Kustomize.",
       "properties": {
         "decryption": {
           "description": "Decrypt Kubernetes secrets before applying them on the cluster.",
@@ -210,7 +210,7 @@
           "type": "array"
         },
         "patchesJson6902": {
-          "description": "JSON 6902 patches, defined as inline YAML objects.",
+          "description": "JSON 6902 patches, defined as inline YAML objects. Deprecated: Use Patches instead.",
           "items": {
             "description": "JSON6902Patch contains a JSON6902 patch and the target the patch should be applied to.",
             "properties": {
@@ -299,7 +299,7 @@
           "type": "array"
         },
         "patchesStrategicMerge": {
-          "description": "Strategic merge patches, defined as inline YAML objects.",
+          "description": "Strategic merge patches, defined as inline YAML objects. Deprecated: Use Patches instead.",
           "items": {
             "x-kubernetes-preserve-unknown-fields": true
           },
@@ -368,11 +368,11 @@
           "description": "Reference of the source where the kustomization file is.",
           "properties": {
             "apiVersion": {
-              "description": "API version of the referent",
+              "description": "API version of the referent.",
               "type": "string"
             },
             "kind": {
-              "description": "Kind of the referent",
+              "description": "Kind of the referent.",
               "enum": [
                 "GitRepository",
                 "Bucket"
@@ -380,11 +380,11 @@
               "type": "string"
             },
             "name": {
-              "description": "Name of the referent",
+              "description": "Name of the referent.",
               "type": "string"
             },
             "namespace": {
-              "description": "Namespace of the referent, defaults to the Kustomization namespace",
+              "description": "Namespace of the referent, defaults to the namespace of the Kubernetes resource object that contains the reference.",
               "type": "string"
             }
           },
@@ -410,13 +410,17 @@
           "type": "string"
         },
         "validation": {
-          "description": "Validate the Kubernetes objects before applying them on the cluster. The validation strategy can be 'client' (local dry-run), 'server' (APIServer dry-run) or 'none'. When 'Force' is 'true', validation will fallback to 'client' if set to 'server' because server-side validation is not supported in this scenario.",
+          "description": "Deprecated: Not used in v1beta2.",
           "enum": [
             "none",
             "client",
             "server"
           ],
           "type": "string"
+        },
+        "wait": {
+          "description": "Wait instructs the controller to check the health of all the reconciled resources. When enabled, the HealthChecks are ignored. Defaults to false.",
+          "type": "boolean"
         }
       },
       "required": [
@@ -488,6 +492,39 @@
           },
           "type": "array"
         },
+        "inventory": {
+          "description": "Inventory contains the list of Kubernetes resource object references that have been successfully applied.",
+          "properties": {
+            "entries": {
+              "description": "Entries of Kubernetes resource object references.",
+              "items": {
+                "description": "ResourceRef contains the information necessary to locate a resource within a cluster.",
+                "properties": {
+                  "id": {
+                    "description": "ID is the string representation of the Kubernetes resource object's metadata, in the format '<namespace>_<name>_<group>_<kind>'.",
+                    "type": "string"
+                  },
+                  "v": {
+                    "description": "Version is the API version of the Kubernetes resource object's kind.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "v"
+                ],
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "entries"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
         "lastAppliedRevision": {
           "description": "The last successfully applied revision. The revision format for Git sources is <branch|tag>/<commit-sha>.",
           "type": "string"
@@ -504,46 +541,6 @@
           "description": "ObservedGeneration is the last reconciled generation.",
           "format": "int64",
           "type": "integer"
-        },
-        "snapshot": {
-          "description": "The last successfully applied revision metadata.",
-          "properties": {
-            "checksum": {
-              "description": "The manifests sha1 checksum.",
-              "type": "string"
-            },
-            "entries": {
-              "description": "A list of Kubernetes kinds grouped by namespace.",
-              "items": {
-                "description": "Snapshot holds the metadata of namespaced Kubernetes objects",
-                "properties": {
-                  "kinds": {
-                    "additionalProperties": {
-                      "type": "string"
-                    },
-                    "description": "The list of Kubernetes kinds.",
-                    "type": "object"
-                  },
-                  "namespace": {
-                    "description": "The namespace of this entry.",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "kinds"
-                ],
-                "type": "object",
-                "additionalProperties": false
-              },
-              "type": "array"
-            }
-          },
-          "required": [
-            "checksum",
-            "entries"
-          ],
-          "type": "object",
-          "additionalProperties": false
         }
       },
       "type": "object",

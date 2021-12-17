@@ -107,6 +107,9 @@
       "additionalProperties": false
     },
     "status": {
+      "default": {
+        "observedGeneration": -1
+      },
       "description": "AlertStatus defines the observed state of Alert",
       "properties": {
         "conditions": {

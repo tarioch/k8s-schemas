@@ -15,6 +15,34 @@
     "spec": {
       "description": "HelmRepositorySpec defines the reference to a Helm repository.",
       "properties": {
+        "accessFrom": {
+          "description": "AccessFrom defines an Access Control List for allowing cross-namespace references to this object.",
+          "properties": {
+            "namespaceSelectors": {
+              "description": "NamespaceSelectors is the list of namespace selectors to which this ACL applies. Items in this list are evaluated using a logical OR operation.",
+              "items": {
+                "description": "NamespaceSelector selects the namespaces to which this ACL applies. An empty map of MatchLabels matches all namespaces in a cluster.",
+                "properties": {
+                  "matchLabels": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "MatchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \"key\", the operator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
+                    "type": "object"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "namespaceSelectors"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
         "interval": {
           "description": "The interval at which to check the upstream for updates.",
           "type": "string"
@@ -59,13 +87,16 @@
       "additionalProperties": false
     },
     "status": {
+      "default": {
+        "observedGeneration": -1
+      },
       "description": "HelmRepositoryStatus defines the observed state of the HelmRepository.",
       "properties": {
         "artifact": {
           "description": "Artifact represents the output of the last successful repository sync.",
           "properties": {
             "checksum": {
-              "description": "Checksum is the SHA1 checksum of the artifact.",
+              "description": "Checksum is the SHA256 checksum of the artifact.",
               "type": "string"
             },
             "lastUpdateTime": {
