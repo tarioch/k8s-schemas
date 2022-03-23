@@ -19,12 +19,15 @@
           "description": "AccessFrom defines an ACL for allowing cross-namespace references to the ImageRepository object based on the caller's namespace labels.",
           "properties": {
             "namespaceSelectors": {
+              "description": "NamespaceSelectors is the list of namespace selectors to which this ACL applies. Items in this list are evaluated using a logical OR operation.",
               "items": {
+                "description": "NamespaceSelector selects the namespaces to which this ACL applies. An empty map of MatchLabels matches all namespaces in a cluster.",
                 "properties": {
                   "matchLabels": {
                     "additionalProperties": {
                       "type": "string"
                     },
+                    "description": "MatchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \"key\", the operator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
                     "type": "object"
                   }
                 },
@@ -34,6 +37,9 @@
               "type": "array"
             }
           },
+          "required": [
+            "namespaceSelectors"
+          ],
           "type": "object",
           "additionalProperties": false
         },
@@ -41,7 +47,7 @@
           "description": "CertSecretRef can be given the name of a secret containing either or both of \n  - a PEM-encoded client certificate (`certFile`) and private  key (`keyFile`);  - a PEM-encoded CA certificate (`caFile`) \n  and whichever are supplied, will be used for connecting to the  registry. The client cert and key are useful if you are  authenticating with a certificate; the CA cert is useful if  you are using a self-signed server certificate.",
           "properties": {
             "name": {
-              "description": "Name of the referent",
+              "description": "Name of the referent.",
               "type": "string"
             }
           },
@@ -63,7 +69,7 @@
           "description": "SecretRef can be given the name of a secret containing credentials to use for the image registry. The secret should be created with `kubectl create secret docker-registry`, or the equivalent.",
           "properties": {
             "name": {
-              "description": "Name of the referent",
+              "description": "Name of the referent.",
               "type": "string"
             }
           },
@@ -86,6 +92,9 @@
       "additionalProperties": false
     },
     "status": {
+      "default": {
+        "observedGeneration": -1
+      },
       "description": "ImageRepositoryStatus defines the observed state of ImageRepository",
       "properties": {
         "canonicalImageName": {
@@ -148,7 +157,7 @@
           "type": "array"
         },
         "lastHandledReconcileAt": {
-          "description": "LastHandledReconcileAt holds the value of the most recent reconcile request value, so a change can be detected.",
+          "description": "LastHandledReconcileAt holds the value of the most recent reconcile request value, so a change of the annotation value can be detected.",
           "type": "string"
         },
         "lastScanResult": {

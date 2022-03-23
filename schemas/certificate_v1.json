@@ -15,6 +15,28 @@
     "spec": {
       "description": "Desired state of the Certificate resource.",
       "properties": {
+        "additionalOutputFormats": {
+          "description": "AdditionalOutputFormats defines extra output formats of the private key and signed certificate chain to be written to this Certificate's target Secret. This is an Alpha Feature and is only enabled with the `--feature-gates=AdditionalCertificateOutputFormats=true` option.",
+          "items": {
+            "description": "CertificateAdditionalOutputFormat defines an additional output format of a Certificate resource. These contain supplementary data formats of the signed certificate chain and paired private key.",
+            "properties": {
+              "type": {
+                "description": "Type is the name of the format type that should be written to the Certificate's target Secret.",
+                "enum": [
+                  "DER",
+                  "CombinedPEM"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
         "commonName": {
           "description": "CommonName is a common name to be used on the Certificate. The CommonName should have a length of 64 characters or fewer to avoid generating invalid CSRs. This value is ignored by TLS clients when any subject alt name is set. This is x509 behaviour: https://tools.ietf.org/html/rfc6125#section-6.4.4",
           "type": "string"
@@ -193,7 +215,7 @@
           "type": "string"
         },
         "secretTemplate": {
-          "description": "SecretTemplate defines annotations and labels to be propagated to the Kubernetes Secret when it is created or updated. Once created, labels and annotations are not yet removed from the Secret when they are removed from the template. See https://github.com/jetstack/cert-manager/issues/4292",
+          "description": "SecretTemplate defines annotations and labels to be copied to the Certificate's Secret. Labels and annotations on the Secret will be changed as they appear on the SecretTemplate when added or removed. SecretTemplate annotations are added in conjunction with, and cannot overwrite, the base set of annotations cert-manager sets on the Certificate's Secret.",
           "properties": {
             "annotations": {
               "additionalProperties": {

@@ -29,7 +29,7 @@
               "description": "The secret name containing the private OpenPGP keys used for decryption.",
               "properties": {
                 "name": {
-                  "description": "Name of the referent",
+                  "description": "Name of the referent.",
                   "type": "string"
                 }
               },
@@ -47,16 +47,16 @@
           "additionalProperties": false
         },
         "dependsOn": {
-          "description": "DependsOn may contain a dependency.CrossNamespaceDependencyReference slice with references to Kustomization resources that must be ready before this Kustomization can be reconciled.",
+          "description": "DependsOn may contain a meta.NamespacedObjectReference slice with references to Kustomization resources that must be ready before this Kustomization can be reconciled.",
           "items": {
-            "description": "CrossNamespaceDependencyReference holds the reference to a dependency.",
+            "description": "NamespacedObjectReference contains enough information to locate the referenced Kubernetes resource object in any namespace.",
             "properties": {
               "name": {
-                "description": "Name holds the name reference of a dependency.",
+                "description": "Name of the referent.",
                 "type": "string"
               },
               "namespace": {
-                "description": "Namespace holds the namespace reference of a dependency.",
+                "description": "Namespace of the referent, when not specified it acts as LocalObjectReference.",
                 "type": "string"
               }
             },
@@ -76,22 +76,22 @@
         "healthChecks": {
           "description": "A list of resources to be included in the health assessment.",
           "items": {
-            "description": "NamespacedObjectKindReference contains enough information to let you locate the typed referenced object in any namespace",
+            "description": "NamespacedObjectKindReference contains enough information to locate the typed referenced Kubernetes resource object in any namespace.",
             "properties": {
               "apiVersion": {
-                "description": "API version of the referent, if not specified the Kubernetes preferred version will be used",
+                "description": "API version of the referent, if not specified the Kubernetes preferred version will be used.",
                 "type": "string"
               },
               "kind": {
-                "description": "Kind of the referent",
+                "description": "Kind of the referent.",
                 "type": "string"
               },
               "name": {
-                "description": "Name of the referent",
+                "description": "Name of the referent.",
                 "type": "string"
               },
               "namespace": {
-                "description": "Namespace of the referent, when not specified it acts as LocalObjectReference",
+                "description": "Namespace of the referent, when not specified it acts as LocalObjectReference.",
                 "type": "string"
               }
             },
@@ -145,7 +145,7 @@
               "description": "SecretRef holds the name to a secret that contains a 'value' key with the kubeconfig file as the value. It must be in the same namespace as the Kustomization. It is recommended that the kubeconfig is self-contained, and the secret is regularly updated if credentials such as a cloud-access-token expire. Cloud specific `cmd-path` auth helpers will not function without adding binaries and credentials to the Pod that is responsible for reconciling the Kustomization.",
               "properties": {
                 "name": {
-                  "description": "Name of the referent",
+                  "description": "Name of the referent.",
                   "type": "string"
                 }
               },
@@ -497,7 +497,7 @@
           "type": "string"
         },
         "lastHandledReconcileAt": {
-          "description": "LastHandledReconcileAt holds the value of the most recent reconcile request value, so a change can be detected.",
+          "description": "LastHandledReconcileAt holds the value of the most recent reconcile request value, so a change of the annotation value can be detected.",
           "type": "string"
         },
         "observedGeneration": {

@@ -7,11 +7,9 @@
           "type": "string"
         },
         "concurrency": {
-          "default": 0,
           "type": "integer"
         },
         "cordon": {
-          "default": false,
           "type": "boolean"
         },
         "drain": {
@@ -22,11 +20,9 @@
               "type": "boolean"
             },
             "disableEviction": {
-              "default": false,
               "type": "boolean"
             },
             "force": {
-              "default": false,
               "type": "boolean"
             },
             "gracePeriod": {
@@ -38,7 +34,6 @@
               "type": "boolean"
             },
             "skipWaitForDeleteTimeout": {
-              "default": 0,
               "type": "integer"
             },
             "timeout": {

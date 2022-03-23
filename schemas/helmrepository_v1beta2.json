@@ -1,5 +1,5 @@
 {
-  "description": "HelmRepository is the Schema for the helmrepositories API",
+  "description": "HelmRepository is the Schema for the helmrepositories API.",
   "properties": {
     "apiVersion": {
       "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
@@ -13,10 +13,10 @@
       "type": "object"
     },
     "spec": {
-      "description": "HelmRepositorySpec defines the reference to a Helm repository.",
+      "description": "HelmRepositorySpec specifies the required configuration to produce an Artifact for a Helm repository index YAML.",
       "properties": {
         "accessFrom": {
-          "description": "AccessFrom defines an Access Control List for allowing cross-namespace references to this object.",
+          "description": "AccessFrom specifies an Access Control List for allowing cross-namespace references to this object. NOTE: Not implemented, provisional as of https://github.com/fluxcd/flux2/pull/2092",
           "properties": {
             "namespaceSelectors": {
               "description": "NamespaceSelectors is the list of namespace selectors to which this ACL applies. Items in this list are evaluated using a logical OR operation.",
@@ -44,7 +44,7 @@
           "additionalProperties": false
         },
         "interval": {
-          "description": "The interval at which to check the upstream for updates.",
+          "description": "Interval at which to check the URL for updates.",
           "type": "string"
         },
         "passCredentials": {
@@ -52,7 +52,7 @@
           "type": "boolean"
         },
         "secretRef": {
-          "description": "The name of the secret containing authentication credentials for the Helm repository. For HTTP/S basic auth the secret must contain username and password fields. For TLS the secret must contain a certFile and keyFile, and/or caCert fields.",
+          "description": "SecretRef specifies the Secret containing authentication credentials for the HelmRepository. For HTTP/S basic auth the secret must contain 'username' and 'password' fields. For TLS the secret must contain a 'certFile' and 'keyFile', and/or 'caCert' fields.",
           "properties": {
             "name": {
               "description": "Name of the referent.",
@@ -66,16 +66,16 @@
           "additionalProperties": false
         },
         "suspend": {
-          "description": "This flag tells the controller to suspend the reconciliation of this source.",
+          "description": "Suspend tells the controller to suspend the reconciliation of this HelmRepository.",
           "type": "boolean"
         },
         "timeout": {
           "default": "60s",
-          "description": "The timeout of index downloading, defaults to 60s.",
+          "description": "Timeout of the index fetch operation, defaults to 60s.",
           "type": "string"
         },
         "url": {
-          "description": "The Helm repository URL, a valid URL contains at least a protocol and host.",
+          "description": "URL of the Helm repository, a valid URL contains at least a protocol and host.",
           "type": "string"
         }
       },
@@ -90,30 +90,35 @@
       "default": {
         "observedGeneration": -1
       },
-      "description": "HelmRepositoryStatus defines the observed state of the HelmRepository.",
+      "description": "HelmRepositoryStatus records the observed state of the HelmRepository.",
       "properties": {
         "artifact": {
-          "description": "Artifact represents the output of the last successful repository sync.",
+          "description": "Artifact represents the last successful HelmRepository reconciliation.",
           "properties": {
             "checksum": {
-              "description": "Checksum is the SHA256 checksum of the artifact.",
+              "description": "Checksum is the SHA256 checksum of the Artifact file.",
               "type": "string"
             },
             "lastUpdateTime": {
-              "description": "LastUpdateTime is the timestamp corresponding to the last update of this artifact.",
+              "description": "LastUpdateTime is the timestamp corresponding to the last update of the Artifact.",
               "format": "date-time",
               "type": "string"
             },
             "path": {
-              "description": "Path is the relative file path of this artifact.",
+              "description": "Path is the relative file path of the Artifact. It can be used to locate the file in the root of the Artifact storage on the local file system of the controller managing the Source.",
               "type": "string"
             },
             "revision": {
-              "description": "Revision is a human readable identifier traceable in the origin source system. It can be a Git commit SHA, Git tag, a Helm index timestamp, a Helm chart version, etc.",
+              "description": "Revision is a human-readable identifier traceable in the origin source system. It can be a Git commit SHA, Git tag, a Helm chart version, etc.",
               "type": "string"
             },
+            "size": {
+              "description": "Size is the number of bytes in the file.",
+              "format": "int64",
+              "type": "integer"
+            },
             "url": {
-              "description": "URL is the HTTP address of this artifact.",
+              "description": "URL is the HTTP address of the Artifact as exposed by the controller managing the Source. It can be used to retrieve the Artifact for consumption, e.g. by another controller applying the Artifact contents.",
               "type": "string"
             }
           },
@@ -185,12 +190,12 @@
           "type": "string"
         },
         "observedGeneration": {
-          "description": "ObservedGeneration is the last observed generation.",
+          "description": "ObservedGeneration is the last observed generation of the HelmRepository object.",
           "format": "int64",
           "type": "integer"
         },
         "url": {
-          "description": "URL is the download link for the last index fetched.",
+          "description": "URL is the dynamic fetch link for the latest Artifact. It is provided on a \"best effort\" basis, and using the precise HelmRepositoryStatus.Artifact data is recommended.",
           "type": "string"
         }
       },

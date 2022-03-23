@@ -1180,6 +1180,9 @@
             "image": {
               "type": "string"
             },
+            "imagePullPolicy": {
+              "type": "string"
+            },
             "imagePullSecrets": {
               "items": {
                 "properties": {
@@ -3211,11 +3214,36 @@
             "image": {
               "type": "string"
             },
+            "imagePullPolicy": {
+              "type": "string"
+            },
+            "imagePullSecrets": {
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array",
+              "x-kubernetes-list-type": "atomic"
+            },
             "labels": {
               "additionalProperties": {
                 "type": "string"
               },
               "type": "object"
+            },
+            "metricsStorage": {
+              "properties": {
+                "type": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
             },
             "options": {
               "type": "object",
@@ -5178,6 +5206,22 @@
             "image": {
               "type": "string"
             },
+            "imagePullPolicy": {
+              "type": "string"
+            },
+            "imagePullSecrets": {
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array",
+              "x-kubernetes-list-type": "atomic"
+            },
             "labels": {
               "additionalProperties": {
                 "type": "string"
@@ -6561,6 +6605,22 @@
           "type": "object",
           "additionalProperties": false
         },
+        "imagePullPolicy": {
+          "type": "string"
+        },
+        "imagePullSecrets": {
+          "items": {
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        },
         "ingester": {
           "properties": {
             "affinity": {
@@ -7152,6 +7212,22 @@
             },
             "image": {
               "type": "string"
+            },
+            "imagePullPolicy": {
+              "type": "string"
+            },
+            "imagePullSecrets": {
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array",
+              "x-kubernetes-list-type": "atomic"
             },
             "labels": {
               "additionalProperties": {
@@ -9118,6 +9194,22 @@
             "hosts": {
               "items": {
                 "type": "string"
+              },
+              "type": "array",
+              "x-kubernetes-list-type": "atomic"
+            },
+            "imagePullPolicy": {
+              "type": "string"
+            },
+            "imagePullSecrets": {
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
               },
               "type": "array",
               "x-kubernetes-list-type": "atomic"
@@ -11092,11 +11184,36 @@
             "image": {
               "type": "string"
             },
+            "imagePullPolicy": {
+              "type": "string"
+            },
+            "imagePullSecrets": {
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array",
+              "x-kubernetes-list-type": "atomic"
+            },
             "labels": {
               "additionalProperties": {
                 "type": "string"
               },
               "type": "object"
+            },
+            "metricsStorage": {
+              "properties": {
+                "type": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
             },
             "nodePort": {
               "format": "int32",
@@ -13829,6 +13946,22 @@
                 "image": {
                   "type": "string"
                 },
+                "imagePullPolicy": {
+                  "type": "string"
+                },
+                "imagePullSecrets": {
+                  "items": {
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "type": "array",
+                  "x-kubernetes-list-type": "atomic"
+                },
                 "javaOpts": {
                   "type": "string"
                 },
@@ -15172,7 +15305,13 @@
             },
             "elasticsearch": {
               "properties": {
+                "doNotProvision": {
+                  "type": "boolean"
+                },
                 "image": {
+                  "type": "string"
+                },
+                "name": {
                   "type": "string"
                 },
                 "nodeCount": {
@@ -15872,6 +16011,22 @@
                 },
                 "image": {
                   "type": "string"
+                },
+                "imagePullPolicy": {
+                  "type": "string"
+                },
+                "imagePullSecrets": {
+                  "items": {
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "type": "array",
+                  "x-kubernetes-list-type": "atomic"
                 },
                 "labels": {
                   "additionalProperties": {
@@ -17802,6 +17957,22 @@
                 },
                 "image": {
                   "type": "string"
+                },
+                "imagePullPolicy": {
+                  "type": "string"
+                },
+                "imagePullSecrets": {
+                  "items": {
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "type": "array",
+                  "x-kubernetes-list-type": "atomic"
                 },
                 "labels": {
                   "additionalProperties": {
