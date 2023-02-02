@@ -248,6 +248,28 @@
             "image": {
               "nullable": true,
               "type": "string"
+            },
+            "volumes": {
+              "items": {
+                "properties": {
+                  "destination": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "name": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "source": {
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "nullable": true,
+              "type": "array"
             }
           },
           "type": "object",
@@ -468,6 +490,28 @@
             "image": {
               "nullable": true,
               "type": "string"
+            },
+            "volumes": {
+              "items": {
+                "properties": {
+                  "destination": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "name": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "source": {
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "nullable": true,
+              "type": "array"
             }
           },
           "type": "object",
