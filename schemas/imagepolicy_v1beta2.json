@@ -1,5 +1,5 @@
 {
-  "description": "HelmRepository is the Schema for the helmrepositories API",
+  "description": "ImagePolicy is the Schema for the imagepolicies API",
   "properties": {
     "apiVersion": {
       "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
@@ -13,49 +13,32 @@
       "type": "object"
     },
     "spec": {
-      "description": "HelmRepositorySpec defines the reference to a Helm repository.",
+      "description": "ImagePolicySpec defines the parameters for calculating the ImagePolicy.",
       "properties": {
-        "accessFrom": {
-          "description": "AccessFrom defines an Access Control List for allowing cross-namespace references to this object.",
+        "filterTags": {
+          "description": "FilterTags enables filtering for only a subset of tags based on a set of rules. If no rules are provided, all the tags from the repository will be ordered and compared.",
           "properties": {
-            "namespaceSelectors": {
-              "description": "NamespaceSelectors is the list of namespace selectors to which this ACL applies. Items in this list are evaluated using a logical OR operation.",
-              "items": {
-                "description": "NamespaceSelector selects the namespaces to which this ACL applies. An empty map of MatchLabels matches all namespaces in a cluster.",
-                "properties": {
-                  "matchLabels": {
-                    "additionalProperties": {
-                      "type": "string"
-                    },
-                    "description": "MatchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \"key\", the operator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
-                    "type": "object"
-                  }
-                },
-                "type": "object",
-                "additionalProperties": false
-              },
-              "type": "array"
+            "extract": {
+              "description": "Extract allows a capture group to be extracted from the specified regular expression pattern, useful before tag evaluation.",
+              "type": "string"
+            },
+            "pattern": {
+              "description": "Pattern specifies a regular expression pattern used to filter for image tags.",
+              "type": "string"
             }
           },
-          "required": [
-            "namespaceSelectors"
-          ],
           "type": "object",
           "additionalProperties": false
         },
-        "interval": {
-          "description": "The interval at which to check the upstream for updates.",
-          "type": "string"
-        },
-        "passCredentials": {
-          "description": "PassCredentials allows the credentials from the SecretRef to be passed on to a host that does not match the host as defined in URL. This may be required if the host of the advertised chart URLs in the index differ from the defined URL. Enabling this should be done with caution, as it can potentially result in credentials getting stolen in a MITM-attack.",
-          "type": "boolean"
-        },
-        "secretRef": {
-          "description": "The name of the secret containing authentication credentials for the Helm repository. For HTTP/S basic auth the secret must contain username and password fields. For TLS the secret must contain a certFile and keyFile, and/or caFile fields.",
+        "imageRepositoryRef": {
+          "description": "ImageRepositoryRef points at the object specifying the image being scanned",
           "properties": {
             "name": {
               "description": "Name of the referent.",
+              "type": "string"
+            },
+            "namespace": {
+              "description": "Namespace of the referent, when not specified it acts as LocalObjectReference.",
               "type": "string"
             }
           },
@@ -65,23 +48,63 @@
           "type": "object",
           "additionalProperties": false
         },
-        "suspend": {
-          "description": "This flag tells the controller to suspend the reconciliation of this source.",
-          "type": "boolean"
-        },
-        "timeout": {
-          "default": "60s",
-          "description": "The timeout of index downloading, defaults to 60s.",
-          "type": "string"
-        },
-        "url": {
-          "description": "The Helm repository URL, a valid URL contains at least a protocol and host.",
-          "type": "string"
+        "policy": {
+          "description": "Policy gives the particulars of the policy to be followed in selecting the most recent image",
+          "properties": {
+            "alphabetical": {
+              "description": "Alphabetical set of rules to use for alphabetical ordering of the tags.",
+              "properties": {
+                "order": {
+                  "default": "asc",
+                  "description": "Order specifies the sorting order of the tags. Given the letters of the alphabet as tags, ascending order would select Z, and descending order would select A.",
+                  "enum": [
+                    "asc",
+                    "desc"
+                  ],
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "numerical": {
+              "description": "Numerical set of rules to use for numerical ordering of the tags.",
+              "properties": {
+                "order": {
+                  "default": "asc",
+                  "description": "Order specifies the sorting order of the tags. Given the integer values from 0 to 9 as tags, ascending order would select 9, and descending order would select 0.",
+                  "enum": [
+                    "asc",
+                    "desc"
+                  ],
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "semver": {
+              "description": "SemVer gives a semantic version range to check against the tags available.",
+              "properties": {
+                "range": {
+                  "description": "Range gives a semver range for the image tag; the highest version within the range that's a tag yields the latest image.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range"
+              ],
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
         }
       },
       "required": [
-        "interval",
-        "url"
+        "imageRepositoryRef",
+        "policy"
       ],
       "type": "object",
       "additionalProperties": false
@@ -90,42 +113,9 @@
       "default": {
         "observedGeneration": -1
       },
-      "description": "HelmRepositoryStatus defines the observed state of the HelmRepository.",
+      "description": "ImagePolicyStatus defines the observed state of ImagePolicy",
       "properties": {
-        "artifact": {
-          "description": "Artifact represents the output of the last successful repository sync.",
-          "properties": {
-            "checksum": {
-              "description": "Checksum is the SHA256 checksum of the artifact.",
-              "type": "string"
-            },
-            "lastUpdateTime": {
-              "description": "LastUpdateTime is the timestamp corresponding to the last update of this artifact.",
-              "format": "date-time",
-              "type": "string"
-            },
-            "path": {
-              "description": "Path is the relative file path of this artifact.",
-              "type": "string"
-            },
-            "revision": {
-              "description": "Revision is a human readable identifier traceable in the origin source system. It can be a Git commit SHA, Git tag, a Helm index timestamp, a Helm chart version, etc.",
-              "type": "string"
-            },
-            "url": {
-              "description": "URL is the HTTP address of this artifact.",
-              "type": "string"
-            }
-          },
-          "required": [
-            "path",
-            "url"
-          ],
-          "type": "object",
-          "additionalProperties": false
-        },
         "conditions": {
-          "description": "Conditions holds the conditions for the HelmRepository.",
           "items": {
             "description": "Condition contains details for one aspect of the current state of this API Resource. --- This struct is intended for direct use as an array at the field path .status.conditions.  For example, \n type FooStatus struct{ // Represents the observations of a foo's current state. // Known .status.conditions.type are: \"Available\", \"Progressing\", and \"Degraded\" // +patchMergeKey=type // +patchStrategy=merge // +listType=map // +listMapKey=type Conditions []metav1.Condition `json:\"conditions,omitempty\" patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"` \n // other fields }",
             "properties": {
@@ -180,17 +170,16 @@
           },
           "type": "array"
         },
-        "lastHandledReconcileAt": {
-          "description": "LastHandledReconcileAt holds the value of the most recent reconcile request value, so a change of the annotation value can be detected.",
+        "latestImage": {
+          "description": "LatestImage gives the first in the list of images scanned by the image repository, when filtered and ordered according to the policy.",
           "type": "string"
         },
         "observedGeneration": {
-          "description": "ObservedGeneration is the last observed generation.",
           "format": "int64",
           "type": "integer"
         },
-        "url": {
-          "description": "URL is the download link for the last index fetched.",
+        "observedPreviousImage": {
+          "description": "ObservedPreviousImage is the observed previous LatestImage. It is used to keep track of the previous and current images.",
           "type": "string"
         }
       },
