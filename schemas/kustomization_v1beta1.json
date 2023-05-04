@@ -204,6 +204,9 @@
                 "additionalProperties": false
               }
             },
+            "required": [
+              "patch"
+            ],
             "type": "object",
             "additionalProperties": false
           },
