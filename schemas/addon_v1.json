@@ -1,10 +1,18 @@
 {
   "properties": {
     "spec": {
-      "x-kubernetes-preserve-unknown-fields": true
-    },
-    "status": {
-      "x-kubernetes-preserve-unknown-fields": true
+      "properties": {
+        "checksum": {
+          "nullable": true,
+          "type": "string"
+        },
+        "source": {
+          "nullable": true,
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
     }
   },
   "type": "object"

@@ -1,10 +1,117 @@
 {
   "properties": {
     "spec": {
-      "x-kubernetes-preserve-unknown-fields": true
+      "properties": {
+        "authPassCredentials": {
+          "type": "boolean"
+        },
+        "authSecret": {
+          "nullable": true,
+          "properties": {
+            "name": {
+              "nullable": true,
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "backOffLimit": {
+          "nullable": true,
+          "type": "integer"
+        },
+        "bootstrap": {
+          "type": "boolean"
+        },
+        "chart": {
+          "nullable": true,
+          "type": "string"
+        },
+        "chartContent": {
+          "nullable": true,
+          "type": "string"
+        },
+        "createNamespace": {
+          "type": "boolean"
+        },
+        "dockerRegistrySecret": {
+          "nullable": true,
+          "properties": {
+            "name": {
+              "nullable": true,
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "failurePolicy": {
+          "nullable": true,
+          "type": "string"
+        },
+        "helmVersion": {
+          "nullable": true,
+          "type": "string"
+        },
+        "jobImage": {
+          "nullable": true,
+          "type": "string"
+        },
+        "repo": {
+          "nullable": true,
+          "type": "string"
+        },
+        "repoCA": {
+          "nullable": true,
+          "type": "string"
+        },
+        "repoCAConfigMap": {
+          "nullable": true,
+          "properties": {
+            "name": {
+              "nullable": true,
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "set": {
+          "additionalProperties": {
+            "x-kubernetes-int-or-string": true
+          },
+          "nullable": true,
+          "type": "object"
+        },
+        "targetNamespace": {
+          "nullable": true,
+          "type": "string"
+        },
+        "timeout": {
+          "nullable": true,
+          "type": "string"
+        },
+        "valuesContent": {
+          "nullable": true,
+          "type": "string"
+        },
+        "version": {
+          "nullable": true,
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
     },
     "status": {
-      "x-kubernetes-preserve-unknown-fields": true
+      "properties": {
+        "jobName": {
+          "nullable": true,
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
     }
   },
   "type": "object"

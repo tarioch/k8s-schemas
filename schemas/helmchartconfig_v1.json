@@ -1,10 +1,18 @@
 {
   "properties": {
     "spec": {
-      "x-kubernetes-preserve-unknown-fields": true
-    },
-    "status": {
-      "x-kubernetes-preserve-unknown-fields": true
+      "properties": {
+        "failurePolicy": {
+          "nullable": true,
+          "type": "string"
+        },
+        "valuesContent": {
+          "nullable": true,
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
     }
   },
   "type": "object"
