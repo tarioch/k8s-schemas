@@ -25,6 +25,10 @@
               "nullable": true,
               "type": "string"
             },
+            "bucketLookup": {
+              "nullable": true,
+              "type": "string"
+            },
             "endpoint": {
               "nullable": true,
               "type": "string"

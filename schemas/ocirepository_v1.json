@@ -16,7 +16,7 @@
       "description": "OCIRepositorySpec defines the desired state of OCIRepository",
       "properties": {
         "certSecretRef": {
-          "description": "CertSecretRef can be given the name of a Secret containing\neither or both of\n\n- a PEM-encoded client certificate (`tls.crt`) and private\nkey (`tls.key`);\n- a PEM-encoded CA certificate (`ca.crt`)\n\nand whichever are supplied, will be used for connecting to the\nregistry. The client cert and key are useful if you are\nauthenticating with a certificate; the CA cert is useful if\nyou are using a self-signed server certificate. The Secret must\nbe of type `Opaque` or `kubernetes.io/tls`.\n\nNote: Support for the `caFile`, `certFile` and `keyFile` keys have\nbeen deprecated.",
+          "description": "CertSecretRef can be given the name of a Secret containing\neither or both of\n\n- a PEM-encoded client certificate (`tls.crt`) and private\nkey (`tls.key`);\n- a PEM-encoded CA certificate (`ca.crt`)\n\nand whichever are supplied, will be used for connecting to the\nregistry. The client cert and key are useful if you are\nauthenticating with a certificate; the CA cert is useful if\nyou are using a self-signed server certificate. The Secret must\nbe of type `Opaque` or `kubernetes.io/tls`.",
           "properties": {
             "name": {
               "description": "Name of the referent.",
@@ -314,10 +314,6 @@
             "additionalProperties": false
           },
           "type": "array"
-        },
-        "contentConfigChecksum": {
-          "description": "ContentConfigChecksum is a checksum of all the configurations related to\nthe content of the source artifact:\n - .spec.ignore\n - .spec.layerSelector\nobserved in .status.observedGeneration version of the object. This can\nbe used to determine if the content configuration has changed and the\nartifact needs to be rebuilt.\nIt has the format of `<algo>:<checksum>`, for example: `sha256:<checksum>`.\n\nDeprecated: Replaced with explicit fields for observed artifact content\nconfig in the status.",
-          "type": "string"
         },
         "lastHandledReconcileAt": {
           "description": "LastHandledReconcileAt holds the value of the most recent\nreconcile request value, so a change of the annotation value\ncan be detected.",
