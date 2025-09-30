@@ -2372,6 +2372,7 @@
               },
               "hostNetworkingHost": {
                 "description": "The host to use if the container is in host networking mode.",
+                "minLength": 1,
                 "type": "string"
               },
               "matchFirstNetwork": {
@@ -2708,6 +2709,9 @@
               },
               "port": {
                 "description": "The port to scrape metrics from.",
+                "format": "int32",
+                "maximum": 65535,
+                "minimum": 0,
                 "type": "integer"
               },
               "proxyConnectHeader": {
@@ -4838,6 +4842,11 @@
               "followRedirects": {
                 "description": "Configure whether HTTP requests follow HTTP 3xx redirects.",
                 "type": "boolean"
+              },
+              "labelSelector": {
+                "description": "Label selector used to filter the servers when fetching them from the API.\nIt requires Prometheus >= v3.5.0.",
+                "minLength": 1,
+                "type": "string"
               },
               "noProxy": {
                 "description": "`noProxy` is a comma-separated string that can contain IPs, CIDR notation, domain names\nthat should be excluded from proxying. IP and domain names can\ncontain port numbers.\n\nIt requires Prometheus >= v2.43.0, Alertmanager >= v0.25.0 or Thanos >= v0.32.0.",
@@ -9529,6 +9538,24 @@
           "minLength": 1,
           "type": "string"
         },
+        "nameEscapingScheme": {
+          "description": "Metric name escaping mode to request through content negotiation.\n\nIt requires Prometheus >= v3.4.0.",
+          "enum": [
+            "AllowUTF8",
+            "Underscores",
+            "Dots",
+            "Values"
+          ],
+          "type": "string"
+        },
+        "nameValidationScheme": {
+          "description": "Specifies the validation scheme for metric and label names.\n\nIt requires Prometheus >= v3.0.0.",
+          "enum": [
+            "UTF8",
+            "Legacy"
+          ],
+          "type": "string"
+        },
         "nativeHistogramBucketLimit": {
           "description": "If there are more than this many buckets in a native histogram,\nbuckets will be merged to stay within the limit.\nIt requires Prometheus >= v2.45.0.",
           "format": "int64",
@@ -12101,7 +12128,7 @@
           "type": "string"
         },
         "scrapeClassicHistograms": {
-          "description": "Whether to scrape a classic histogram that is also exposed as a native histogram.\nIt requires Prometheus >= v2.45.0.",
+          "description": "Whether to scrape a classic histogram that is also exposed as a native histogram.\nIt requires Prometheus >= v2.45.0.\n\nNotice: `scrapeClassicHistograms` corresponds to the `always_scrape_classic_histograms` field in the Prometheus configuration.",
           "type": "boolean"
         },
         "scrapeInterval": {

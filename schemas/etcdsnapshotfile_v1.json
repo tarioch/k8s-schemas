@@ -1,54 +1,68 @@
 {
+  "description": "ETCDSnapshot tracks a point-in-time snapshot of the etcd datastore.",
   "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
     "spec": {
+      "description": "Spec defines properties of an etcd snapshot file",
       "properties": {
         "location": {
-          "nullable": true,
+          "description": "Location is the absolute file:// or s3:// URI address of the snapshot.",
           "type": "string"
         },
         "metadata": {
           "additionalProperties": {
-            "nullable": true,
             "type": "string"
           },
-          "nullable": true,
+          "description": "Metadata contains point-in-time snapshot of the contents of the\nk3s-etcd-snapshot-extra-metadata ConfigMap's data field, at the time the\nsnapshot was taken. This is intended to contain data about cluster state\nthat may be important for an external system to have available when restoring\nthe snapshot.",
           "type": "object"
         },
         "nodeName": {
-          "nullable": true,
+          "description": "NodeName contains the name of the node that took the snapshot.",
           "type": "string"
         },
         "s3": {
-          "nullable": true,
+          "description": "S3 contains extra metadata about the S3 storage system holding the\nsnapshot. This is guaranteed to be set for all snapshots uploaded to S3.\nIf not specified, the snapshot was not uploaded to S3.",
           "properties": {
             "bucket": {
-              "nullable": true,
+              "description": "Bucket is the bucket holding the snapshot",
               "type": "string"
             },
             "bucketLookup": {
-              "nullable": true,
+              "description": "BucketLookup is the bucket lookup type, one of 'auto', 'dns', 'path'. Default if empty is 'auto'.",
               "type": "string"
             },
             "endpoint": {
-              "nullable": true,
+              "description": "Endpoint is the host or host:port of the S3 service",
               "type": "string"
             },
             "endpointCA": {
-              "nullable": true,
+              "description": "EndpointCA is the path on disk to the S3 service's trusted CA list. Leave empty to use the OS CA bundle.",
               "type": "string"
             },
             "insecure": {
+              "description": "Insecure is true if the S3 service uses HTTP instead of HTTPS",
               "type": "boolean"
             },
             "prefix": {
-              "nullable": true,
+              "description": "Prefix is the prefix in which the snapshot file is stored.",
               "type": "string"
             },
             "region": {
-              "nullable": true,
+              "description": "Region is the region of the S3 service",
               "type": "string"
             },
             "skipSSLVerify": {
+              "description": "SkipSSLVerify is true if TLS certificate verification is disabled",
               "type": "boolean"
             }
           },
@@ -56,28 +70,36 @@
           "additionalProperties": false
         },
         "snapshotName": {
-          "nullable": true,
+          "description": "SnapshotName contains the base name of the snapshot file. CLI actions that act\non snapshots stored locally or within a pre-configured S3 bucket and\nprefix usually take the snapshot name as their argument.",
           "type": "string"
         }
       },
+      "required": [
+        "location",
+        "nodeName",
+        "snapshotName"
+      ],
       "type": "object",
       "additionalProperties": false
     },
     "status": {
+      "description": "Status represents current information about a snapshot.",
       "properties": {
         "creationTime": {
-          "nullable": true,
+          "description": "CreationTime is the timestamp when the snapshot was taken by etcd.",
+          "format": "date-time",
           "type": "string"
         },
         "error": {
-          "nullable": true,
+          "description": "Error is the last observed error during snapshot creation, if any.\nIf the snapshot is retried, this field will be cleared on success.",
           "properties": {
             "message": {
-              "nullable": true,
+              "description": "Message is a string detailing the encountered error during snapshot creation if specified.\nNOTE: message may be logged, and it should not contain sensitive information.",
               "type": "string"
             },
             "time": {
-              "nullable": true,
+              "description": "Time is the timestamp when the error was encountered.",
+              "format": "date-time",
               "type": "string"
             }
           },
@@ -85,12 +107,21 @@
           "additionalProperties": false
         },
         "readyToUse": {
-          "nullable": true,
+          "description": "ReadyToUse indicates that the snapshot is available to be restored.",
           "type": "boolean"
         },
         "size": {
-          "nullable": true,
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Size is the size of the snapshot file, in bytes. If not specified, the snapshot failed.",
+          "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+          "x-kubernetes-int-or-string": true
         }
       },
       "type": "object",
