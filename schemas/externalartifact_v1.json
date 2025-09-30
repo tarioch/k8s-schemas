@@ -1,5 +1,5 @@
 {
-  "description": "Alert is the Schema for the alerts API",
+  "description": "ExternalArtifact is the Schema for the external artifacts API",
   "properties": {
     "apiVersion": {
       "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
@@ -13,115 +13,92 @@
       "type": "object"
     },
     "spec": {
-      "description": "AlertSpec defines an alerting rule for events involving a list of objects",
+      "description": "ExternalArtifactSpec defines the desired state of ExternalArtifact",
       "properties": {
-        "eventSeverity": {
-          "default": "info",
-          "description": "Filter events based on severity, defaults to ('info').\nIf set to 'info' no events will be filtered.",
-          "enum": [
-            "info",
-            "error"
-          ],
-          "type": "string"
-        },
-        "eventSources": {
-          "description": "Filter events based on the involved objects.",
-          "items": {
-            "description": "CrossNamespaceObjectReference contains enough information to let you locate the\ntyped referenced object at cluster level",
-            "properties": {
-              "apiVersion": {
-                "description": "API version of the referent",
-                "type": "string"
-              },
-              "kind": {
-                "description": "Kind of the referent",
-                "enum": [
-                  "Bucket",
-                  "GitRepository",
-                  "Kustomization",
-                  "HelmRelease",
-                  "HelmChart",
-                  "HelmRepository",
-                  "ImageRepository",
-                  "ImagePolicy",
-                  "ImageUpdateAutomation",
-                  "OCIRepository"
-                ],
-                "type": "string"
-              },
-              "matchLabels": {
-                "additionalProperties": {
-                  "type": "string"
-                },
-                "description": "MatchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\nmap is equivalent to an element of matchExpressions, whose key field is \"key\", the\noperator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
-                "type": "object"
-              },
-              "name": {
-                "description": "Name of the referent",
-                "maxLength": 53,
-                "minLength": 1,
-                "type": "string"
-              },
-              "namespace": {
-                "description": "Namespace of the referent",
-                "maxLength": 53,
-                "minLength": 1,
-                "type": "string"
-              }
-            },
-            "required": [
-              "kind",
-              "name"
-            ],
-            "type": "object",
-            "additionalProperties": false
-          },
-          "type": "array"
-        },
-        "exclusionList": {
-          "description": "A list of Golang regular expressions to be used for excluding messages.",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "providerRef": {
-          "description": "Send events using this provider.",
+        "sourceRef": {
+          "description": "SourceRef points to the Kubernetes custom resource for\nwhich the artifact is generated.",
           "properties": {
+            "apiVersion": {
+              "description": "API version of the referent, if not specified the Kubernetes preferred version will be used.",
+              "type": "string"
+            },
+            "kind": {
+              "description": "Kind of the referent.",
+              "type": "string"
+            },
             "name": {
               "description": "Name of the referent.",
+              "type": "string"
+            },
+            "namespace": {
+              "description": "Namespace of the referent, when not specified it acts as LocalObjectReference.",
               "type": "string"
             }
           },
           "required": [
+            "kind",
             "name"
           ],
           "type": "object",
           "additionalProperties": false
-        },
-        "summary": {
-          "description": "Short description of the impact and affected cluster.",
-          "type": "string"
-        },
-        "suspend": {
-          "description": "This flag tells the controller to suspend subsequent events dispatching.\nDefaults to false.",
-          "type": "boolean"
         }
       },
-      "required": [
-        "eventSources",
-        "providerRef"
-      ],
       "type": "object",
       "additionalProperties": false
     },
     "status": {
-      "default": {
-        "observedGeneration": -1
-      },
-      "description": "AlertStatus defines the observed state of Alert",
+      "description": "ExternalArtifactStatus defines the observed state of ExternalArtifact",
       "properties": {
+        "artifact": {
+          "description": "Artifact represents the output of an ExternalArtifact reconciliation.",
+          "properties": {
+            "digest": {
+              "description": "Digest is the digest of the file in the form of '<algorithm>:<checksum>'.",
+              "pattern": "^[a-z0-9]+(?:[.+_-][a-z0-9]+)*:[a-zA-Z0-9=_-]+$",
+              "type": "string"
+            },
+            "lastUpdateTime": {
+              "description": "LastUpdateTime is the timestamp corresponding to the last update of the\nArtifact.",
+              "format": "date-time",
+              "type": "string"
+            },
+            "metadata": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "Metadata holds upstream information such as OCI annotations.",
+              "type": "object"
+            },
+            "path": {
+              "description": "Path is the relative file path of the Artifact. It can be used to locate\nthe file in the root of the Artifact storage on the local file system of\nthe controller managing the Source.",
+              "type": "string"
+            },
+            "revision": {
+              "description": "Revision is a human-readable identifier traceable in the origin source\nsystem. It can be a Git commit SHA, Git tag, a Helm chart version, etc.",
+              "type": "string"
+            },
+            "size": {
+              "description": "Size is the number of bytes in the file.",
+              "format": "int64",
+              "type": "integer"
+            },
+            "url": {
+              "description": "URL is the HTTP address of the Artifact as exposed by the controller\nmanaging the Source. It can be used to retrieve the Artifact for\nconsumption, e.g. by another controller applying the Artifact contents.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "digest",
+            "lastUpdateTime",
+            "path",
+            "revision",
+            "url"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
         "conditions": {
+          "description": "Conditions holds the conditions for the ExternalArtifact.",
           "items": {
             "description": "Condition contains details for one aspect of the current state of this API Resource.",
             "properties": {
@@ -175,11 +152,6 @@
             "additionalProperties": false
           },
           "type": "array"
-        },
-        "observedGeneration": {
-          "description": "ObservedGeneration is the last observed generation.",
-          "format": "int64",
-          "type": "integer"
         }
       },
       "type": "object",

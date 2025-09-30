@@ -1,5 +1,5 @@
 {
-  "description": "Bucket is the Schema for the buckets API",
+  "description": "ImageRepository is the Schema for the imagerepositories API",
   "properties": {
     "apiVersion": {
       "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
@@ -13,10 +13,10 @@
       "type": "object"
     },
     "spec": {
-      "description": "BucketSpec defines the desired state of an S3 compatible bucket",
+      "description": "ImageRepositorySpec defines the parameters for scanning an image\nrepository, e.g., `fluxcd/flux`.",
       "properties": {
         "accessFrom": {
-          "description": "AccessFrom defines an Access Control List for allowing cross-namespace references to this object.",
+          "description": "AccessFrom defines an ACL for allowing cross-namespace references\nto the ImageRepository object based on the caller's namespace labels.",
           "properties": {
             "namespaceSelectors": {
               "description": "NamespaceSelectors is the list of namespace selectors to which this ACL applies.\nItems in this list are evaluated using a logical OR operation.",
@@ -43,42 +43,8 @@
           "type": "object",
           "additionalProperties": false
         },
-        "bucketName": {
-          "description": "The bucket name.",
-          "type": "string"
-        },
-        "endpoint": {
-          "description": "The bucket endpoint address.",
-          "type": "string"
-        },
-        "ignore": {
-          "description": "Ignore overrides the set of excluded patterns in the .sourceignore format\n(which is the same as .gitignore). If not provided, a default will be used,\nconsult the documentation for your version to find out what those are.",
-          "type": "string"
-        },
-        "insecure": {
-          "description": "Insecure allows connecting to a non-TLS S3 HTTP endpoint.",
-          "type": "boolean"
-        },
-        "interval": {
-          "description": "The interval at which to check for bucket updates.",
-          "type": "string"
-        },
-        "provider": {
-          "default": "generic",
-          "description": "The S3 compatible storage provider name, default ('generic').",
-          "enum": [
-            "generic",
-            "aws",
-            "gcp"
-          ],
-          "type": "string"
-        },
-        "region": {
-          "description": "The bucket region.",
-          "type": "string"
-        },
-        "secretRef": {
-          "description": "The name of the secret containing authentication credentials\nfor the Bucket.",
+        "certSecretRef": {
+          "description": "CertSecretRef can be given the name of a Secret containing\neither or both of\n\n- a PEM-encoded client certificate (`tls.crt`) and private\nkey (`tls.key`);\n- a PEM-encoded CA certificate (`ca.crt`)\n\nand whichever are supplied, will be used for connecting to the\nregistry. The client cert and key are useful if you are\nauthenticating with a certificate; the CA cert is useful if\nyou are using a self-signed server certificate. The Secret must\nbe of type `Opaque` or `kubernetes.io/tls`.\n\nNote: Support for the `caFile`, `certFile` and `keyFile` keys has\nbeen deprecated.",
           "properties": {
             "name": {
               "description": "Name of the referent.",
@@ -91,19 +57,86 @@
           "type": "object",
           "additionalProperties": false
         },
+        "exclusionList": {
+          "default": [
+            "^.*\\.sig$"
+          ],
+          "description": "ExclusionList is a list of regex strings used to exclude certain tags\nfrom being stored in the database.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 25,
+          "type": "array"
+        },
+        "image": {
+          "description": "Image is the name of the image repository",
+          "type": "string"
+        },
+        "insecure": {
+          "description": "Insecure allows connecting to a non-TLS HTTP container registry.",
+          "type": "boolean"
+        },
+        "interval": {
+          "description": "Interval is the length of time to wait between\nscans of the image repository.",
+          "pattern": "^([0-9]+(\\.[0-9]+)?(ms|s|m|h))+$",
+          "type": "string"
+        },
+        "provider": {
+          "default": "generic",
+          "description": "The provider used for authentication, can be 'aws', 'azure', 'gcp' or 'generic'.\nWhen not specified, defaults to 'generic'.",
+          "enum": [
+            "generic",
+            "aws",
+            "azure",
+            "gcp"
+          ],
+          "type": "string"
+        },
+        "proxySecretRef": {
+          "description": "ProxySecretRef specifies the Secret containing the proxy configuration\nto use while communicating with the container registry.",
+          "properties": {
+            "name": {
+              "description": "Name of the referent.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "secretRef": {
+          "description": "SecretRef can be given the name of a secret containing\ncredentials to use for the image registry. The secret should be\ncreated with `kubectl create secret docker-registry`, or the\nequivalent.",
+          "properties": {
+            "name": {
+              "description": "Name of the referent.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "serviceAccountName": {
+          "description": "ServiceAccountName is the name of the Kubernetes ServiceAccount used to authenticate\nthe image pull if the service account has attached pull secrets.",
+          "maxLength": 253,
+          "type": "string"
+        },
         "suspend": {
-          "description": "This flag tells the controller to suspend the reconciliation of this source.",
+          "description": "This flag tells the controller to suspend subsequent image scans.\nIt does not apply to already started scans. Defaults to false.",
           "type": "boolean"
         },
         "timeout": {
-          "default": "60s",
-          "description": "The timeout for download operations, defaults to 60s.",
+          "description": "Timeout for image scanning.\nDefaults to 'Interval' duration.",
+          "pattern": "^([0-9]+(\\.[0-9]+)?(ms|s|m))+$",
           "type": "string"
         }
       },
       "required": [
-        "bucketName",
-        "endpoint",
+        "image",
         "interval"
       ],
       "type": "object",
@@ -113,43 +146,13 @@
       "default": {
         "observedGeneration": -1
       },
-      "description": "BucketStatus defines the observed state of a bucket",
+      "description": "ImageRepositoryStatus defines the observed state of ImageRepository",
       "properties": {
-        "artifact": {
-          "description": "Artifact represents the output of the last successful Bucket sync.",
-          "properties": {
-            "checksum": {
-              "description": "Checksum is the SHA256 checksum of the artifact.",
-              "type": "string"
-            },
-            "lastUpdateTime": {
-              "description": "LastUpdateTime is the timestamp corresponding to the last update of this\nartifact.",
-              "format": "date-time",
-              "type": "string"
-            },
-            "path": {
-              "description": "Path is the relative file path of this artifact.",
-              "type": "string"
-            },
-            "revision": {
-              "description": "Revision is a human readable identifier traceable in the origin source\nsystem. It can be a Git commit SHA, Git tag, a Helm index timestamp, a Helm\nchart version, etc.",
-              "type": "string"
-            },
-            "url": {
-              "description": "URL is the HTTP address of this artifact.",
-              "type": "string"
-            }
-          },
-          "required": [
-            "lastUpdateTime",
-            "path",
-            "url"
-          ],
-          "type": "object",
-          "additionalProperties": false
+        "canonicalImageName": {
+          "description": "CanonicalName is the name of the image repository with all the\nimplied bits made explicit; e.g., `docker.io/library/alpine`\nrather than `alpine`.",
+          "type": "string"
         },
         "conditions": {
-          "description": "Conditions holds the conditions for the Bucket.",
           "items": {
             "description": "Condition contains details for one aspect of the current state of this API Resource.",
             "properties": {
@@ -208,14 +211,47 @@
           "description": "LastHandledReconcileAt holds the value of the most recent\nreconcile request value, so a change of the annotation value\ncan be detected.",
           "type": "string"
         },
+        "lastScanResult": {
+          "description": "LastScanResult contains the number of fetched tags.",
+          "properties": {
+            "latestTags": {
+              "description": "LatestTags is a small sample of the tags found in the last scan.\nIt's the first 10 tags when sorting all the tags in descending\nalphabetical order.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "revision": {
+              "description": "Revision is a stable hash of the scanned tags.",
+              "type": "string"
+            },
+            "scanTime": {
+              "description": "ScanTime is the time when the last scan was performed.",
+              "format": "date-time",
+              "type": "string"
+            },
+            "tagCount": {
+              "description": "TagCount is the number of tags found in the last scan.",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "tagCount"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "observedExclusionList": {
+          "description": "ObservedExclusionList is a list of observed exclusion list. It reflects\nthe exclusion rules used for the observed scan result in\nspec.lastScanResult.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
         "observedGeneration": {
-          "description": "ObservedGeneration is the last observed generation.",
+          "description": "ObservedGeneration is the last reconciled generation.",
           "format": "int64",
           "type": "integer"
-        },
-        "url": {
-          "description": "URL is the download link for the artifact output of the last Bucket sync.",
-          "type": "string"
         }
       },
       "type": "object",
